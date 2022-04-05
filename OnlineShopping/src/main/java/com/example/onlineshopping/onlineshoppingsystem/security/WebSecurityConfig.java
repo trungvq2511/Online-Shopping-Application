@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //JWT signature secret key
     public static final String SECRET_KEY = "secret-key";
     //token expired time: 10 minutes
-    public static final int TOKEN_EXPIRED_TIME = 30 * 1000;
+    public static final int TOKEN_EXPIRED_TIME = 30 * 60 * 1000;
 
     private final UserDetailsService userDetailsService;
 
@@ -56,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests().antMatchers("/login").permitAll();
         http.authorizeRequests().antMatchers("/auth/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/get/**").permitAll();
+//        http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/get/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.PUT, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
