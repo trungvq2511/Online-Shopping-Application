@@ -1,0 +1,5 @@
+1. Tham khảo CV và viết tương tự ( update thông tin cá nhân theo format của CV đó )
+2. Gửi CV qua mail cho:
+to: toidv
+CC: tienvv
+subject: [CV][JAVA] CV of [account fsoft]
