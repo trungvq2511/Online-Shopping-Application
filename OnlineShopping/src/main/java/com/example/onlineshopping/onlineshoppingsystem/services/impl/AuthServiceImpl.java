@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.AccessTokenDTORequest;
+import com.example.onlineshopping.onlineshoppingsystem.dto.request.RefreshTokenDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserRequestDTO;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.RefreshTokenDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.UserDTOResponse;
@@ -47,33 +47,44 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RefreshTokenDTOResponse refreshToken(AccessTokenDTORequest accessTokenDTORequest) throws InvalidTokenException {
-        String accessTokenRequest = accessTokenDTORequest.getAccessToken();
+    public RefreshTokenDTOResponse refreshToken(RefreshTokenDTORequest accessTokenDTORequest) throws InvalidTokenException {
+        String accessTokenRequest = accessTokenDTORequest.getRefreshToken();
         if (accessTokenRequest != null && accessTokenRequest.startsWith("Bearer ")) {
             //if token is valid
             try {
-                String accessToken = accessTokenRequest.substring("Bearer ".length());
+                String token = accessTokenRequest.substring("Bearer ".length());
                 //decode
                 Algorithm algorithm = Algorithm.HMAC256(WebSecurityConfig.SECRET_KEY);
                 JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(accessToken);
+                DecodedJWT decodedJWT = verifier.verify(token);
                 //authenticate
                 String username = decodedJWT.getSubject();
                 //check if user is exists
                 UserDTOResponse user = userService.getUserByUsername(username);
-                //create refresh token
+
+                //create access token
+                String accessToken = JWT.create()
+                        //subject
+                        .withSubject(user.getEmail())
+                        //issued
+                        .withIssuedAt(new Date())
+                        //expired date
+                        .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.ACCESS_TOKEN_EXPIRED_TIME))
+                        //roles
+                        .withClaim("roles", user.getRole().stream().map(role -> role.getName().toString()).collect(Collectors.toList()))
+                        .sign(algorithm);
                 String refreshToken = JWT.create()
                         //subject
                         .withSubject(user.getEmail())
                         //issued
                         .withIssuedAt(new Date())
                         //expired date
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 1000))
+                        .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.REFRESH_TOKEN_EXPIRED_TIME))
                         //roles
                         .withClaim("roles", user.getRole().stream().map(role -> role.getName().toString()).collect(Collectors.toList()))
                         .sign(algorithm);
 
-                return new RefreshTokenDTOResponse(refreshToken);
+                return new RefreshTokenDTOResponse(accessToken, refreshToken);
             } catch (Exception e) {
                 System.out.println("EXPIRED");
                 throw new InvalidTokenException(e.getMessage());

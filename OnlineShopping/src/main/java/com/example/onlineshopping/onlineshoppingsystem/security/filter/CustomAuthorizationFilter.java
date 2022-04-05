@@ -61,7 +61,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     new ObjectMapper().writeValue(response.getOutputStream(), errors);
                 }
-
             } else {
                 // let filter pass the request, go through
                 filterChain.doFilter(request, response);

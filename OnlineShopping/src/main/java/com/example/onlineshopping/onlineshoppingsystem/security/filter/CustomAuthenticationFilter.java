@@ -51,13 +51,23 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 //issued
                 .withIssuedAt(new Date())
                 //expired date
-                .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.TOKEN_EXPIRED_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.ACCESS_TOKEN_EXPIRED_TIME))
                 //roles
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
-
+        String refreshToken = JWT.create()
+                //subject
+                .withSubject(user.getUsername())
+                //issued
+                .withIssuedAt(new Date())
+                //expired date
+                .withExpiresAt(new Date(System.currentTimeMillis() + WebSecurityConfig.REFRESH_TOKEN_EXPIRED_TIME))
+                //roles
+                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .sign(algorithm);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
+        tokens.put("refresh_token", refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);

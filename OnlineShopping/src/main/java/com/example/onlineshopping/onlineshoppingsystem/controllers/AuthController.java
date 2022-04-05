@@ -1,6 +1,6 @@
 package com.example.onlineshopping.onlineshoppingsystem.controllers;
 
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.AccessTokenDTORequest;
+import com.example.onlineshopping.onlineshoppingsystem.dto.request.RefreshTokenDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserRequestDTO;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.SuccessResponse;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @GetMapping("/token/refresh")
-    public ResponseEntity refreshToken(@RequestBody AccessTokenDTORequest accessToken) throws InvalidTokenException {
+    public ResponseEntity refreshToken(@RequestBody RefreshTokenDTORequest accessToken) throws InvalidTokenException {
         return new ResponseEntity(new SuccessResponse(authService.refreshToken(accessToken)), HttpStatus.OK);
     }
 

@@ -8,5 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class RefreshTokenDTOResponse {
+    private String accessToken;
     private String refreshToken;
 }

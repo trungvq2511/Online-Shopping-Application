@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AccessTokenDTORequest {
-    private String accessToken;
+public class RefreshTokenDTORequest {
+    private String refreshToken;
 }
