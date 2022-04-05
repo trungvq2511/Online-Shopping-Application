@@ -45,7 +45,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(WebSecurityConfig.SECRET_KEY);
         //create access token
-        generateToken(user.getUsername());
         String accessToken = JWT.create()
                 //subject
                 .withSubject(user.getUsername())
@@ -64,8 +63,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
-    private void generateToken(String username) {
-    }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
