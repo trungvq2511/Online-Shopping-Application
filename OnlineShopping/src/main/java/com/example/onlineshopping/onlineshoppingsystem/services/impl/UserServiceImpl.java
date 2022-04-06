@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -60,6 +61,12 @@ public class UserServiceImpl implements UserService {
         });
 
         return userDTOResponses;
+    }
+
+    @Override
+    public User getUserById(long userId) {
+        Optional<User> byId = userRepository.findById(userId);
+        return byId.isPresent() ? null : byId.get();
     }
 
     @Override

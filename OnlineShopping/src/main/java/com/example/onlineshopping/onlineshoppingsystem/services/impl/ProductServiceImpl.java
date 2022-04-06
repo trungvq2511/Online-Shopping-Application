@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,10 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,8 +41,6 @@ public class ProductServiceImpl implements ProductService {
     private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
 
-    @PersistenceContext
-    EntityManager entityManager;
 
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
@@ -70,7 +63,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTOResponse getProductById(long productId) throws NotFoundException {
+    public Product getProductById(long productId) {
+        Optional<Product> byId = productRepository.findById(productId);
+        return byId.isPresent() ? null : byId.get();
+    }
+
+    @Override
+    public ProductDTOResponse getProductDTOById(long productId) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product is not found"));
         return modelMapper.map(product, ProductDTOResponse.class);

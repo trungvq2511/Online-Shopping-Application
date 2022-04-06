@@ -33,6 +33,10 @@ public class CartItem implements Serializable {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Embeddable
     public static class CartItemKey implements Serializable {
         @Column(name = "user_id")
@@ -40,5 +44,12 @@ public class CartItem implements Serializable {
 
         @Column(name = "product_id")
         private Long productId;
+    }
+
+    public CartItem(User user, Product product, Integer quantity) {
+        this.cartItemKey = new CartItemKey(user.getUserId(), product.getProductId());
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
     }
 }

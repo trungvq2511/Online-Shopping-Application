@@ -28,7 +28,7 @@ public class ProductController {
 
     @GetMapping("/get/{productId}")
     public ResponseEntity getProductById(@PathVariable long productId) throws NotFoundException {
-        return new ResponseEntity(new SuccessResponse((productService.getProductById(productId))), HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse((productService.getProductDTOById(productId))), HttpStatus.OK);
     }
 
     @PostMapping("/manage/add-product")
