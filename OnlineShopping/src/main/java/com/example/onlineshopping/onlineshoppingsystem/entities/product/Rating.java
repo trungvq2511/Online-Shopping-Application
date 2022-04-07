@@ -35,6 +35,10 @@ public class Rating {
     private String comment;
 
     @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserProductKey implements Serializable {
         @Column(name = "user_id")
         private Long userId;
@@ -42,5 +46,13 @@ public class Rating {
         @Column(name = "product_id")
         private Long productId;
 
+    }
+
+    public Rating(User user,Product product, String comment, Double score) {
+        this.key  = new UserProductKey(user.getUserId(), product.getProductId());
+        this.user = user;
+        this.product = product;
+        this.comment = comment;
+        this.score = score;
     }
 }
