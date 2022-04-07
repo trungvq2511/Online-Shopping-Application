@@ -1,10 +1,11 @@
 package com.example.onlineshopping.onlineshoppingsystem.services.impl;
 
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserRequestDTO;
+import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.UserDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.EnumRole;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.Role;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
+import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.RoleRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
 import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
@@ -34,9 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveNewUser(UserRequestDTO userRequestDTO) {
-        //id auto-generated
-        userRequestDTO.setUserId(null);
+    public void saveNewUser(UserDTORequest userRequestDTO) {
         User user = modelMapper.map(userRequestDTO, User.class);
 
         //role user
@@ -78,6 +77,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTOResponse getUserInfo(String username) {
         return modelMapper.map(userRepository.findUserByEmail(username), UserDTOResponse.class);
+    }
+
+    @Override
+    public void editUserInfo(String username, UserDTORequest userDTORequest) throws NotFoundException {
+        User userByEmail = userRepository.findUserByEmail(username);
+        if (userByEmail == null) {
+            throw new NotFoundException("User is not found!");
+        }
+        userDTORequest.setPassword(userByEmail.getPassword());
+
+        modelMapper.map(userDTORequest, userByEmail);
+        userRepository.save(userByEmail);
+    }
+
+    @Override
+    public void deleteUser(long userId) throws NotFoundException {
+        User userById = getUserById(userId);
+        if (userById == null) {
+            throw new NotFoundException("User is not found!");
+        }
+        userRepository.delete(userById);
     }
 
 

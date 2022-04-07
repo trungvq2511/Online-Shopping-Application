@@ -1,7 +1,7 @@
 package com.example.onlineshopping.onlineshoppingsystem.controllers;
 
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.RefreshTokenDTORequest;
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserRequestDTO;
+import com.example.onlineshopping.onlineshoppingsystem.dto.request.UserDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.SuccessResponse;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidTokenException;
@@ -21,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity signUp(@RequestBody UserRequestDTO userRequestDTO) throws InvalidInputDataException {
+    public ResponseEntity signUp(@RequestBody UserDTORequest userRequestDTO) throws InvalidInputDataException {
         authService.signUp(userRequestDTO);
         return new ResponseEntity(new SuccessResponse("Register successfully!"), HttpStatus.OK);
     }

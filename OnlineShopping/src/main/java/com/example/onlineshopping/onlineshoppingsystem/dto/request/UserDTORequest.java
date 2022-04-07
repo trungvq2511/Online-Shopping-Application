@@ -11,8 +11,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
-    private Long userId;
+public class UserDTORequest {
+//    private Long userId;
     private String firstName;
     private String lastName;
     private Boolean gender;
@@ -22,7 +22,7 @@ public class UserRequestDTO {
     private String phoneNumber;
     private String email;
     private String password;
-    private Boolean verified;
+//    private Boolean verified;
 //    private List<CartItem> cartItem;
 //    List<Role> role;
 //    private List<Rating> ratings;
