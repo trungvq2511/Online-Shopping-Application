@@ -14,4 +14,5 @@ User getUserById(long userId);
     UserDTOResponse getUserByUsername(String username);
 
 
+    UserDTOResponse getUserInfo(String username);
 }
