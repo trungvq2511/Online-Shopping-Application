@@ -32,7 +32,22 @@ public class InvoiceItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Column(name = "money", nullable = false)
+    private Double price;
+
+    public InvoiceItem(Invoice invoice, Product item, Integer quantity, Double price) {
+        this.invoiceItemKey = new InvoiceItemKey(invoice.getInvoiceId(), item.getProductId());
+        this.invoice = invoice;
+        this.item = item;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class InvoiceItemKey implements Serializable {
         @Column(name = "invoice_id")
         private Long invoiceId;
