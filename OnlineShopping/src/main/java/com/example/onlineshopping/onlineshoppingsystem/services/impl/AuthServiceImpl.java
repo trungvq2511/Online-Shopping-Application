@@ -18,6 +18,7 @@ import com.example.onlineshopping.onlineshoppingsystem.services.AuthService;
 import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public void signUp(UserDTORequest userRequestDTO) throws InvalidInputDataException {
         //check
@@ -95,6 +97,7 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    @Transactional
     @Override
     public void verifyEmail(String token) throws InvalidTokenException {
         if (token != null) {

@@ -16,6 +16,7 @@ import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,11 +68,13 @@ public class CartServiceImpl implements CartService {
         return cartDTOResponse;
     }
 
+    @Transactional
     @Override
     public void addItemToCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
         saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
     }
 
+    @Transactional
     @Override
     public void editItemInCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
         saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
@@ -97,6 +100,7 @@ public class CartServiceImpl implements CartService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteItemInCart(Long userId, Long productId) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();

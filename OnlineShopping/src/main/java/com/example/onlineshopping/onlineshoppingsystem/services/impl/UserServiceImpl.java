@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public void saveNewUser(UserDTORequest userRequestDTO) {
         User user = modelMapper.map(userRequestDTO, User.class);
@@ -79,6 +81,7 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(userRepository.findUserByEmail(username), UserDTOResponse.class);
     }
 
+    @Transactional
     @Override
     public void editUserInfo(String username, UserDTORequest userDTORequest) throws NotFoundException {
         User userByEmail = userRepository.findUserByEmail(username);
@@ -91,6 +94,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userByEmail);
     }
 
+    @Transactional
     @Override
     public void deleteUser(long userId) throws NotFoundException {
         User userById = getUserById(userId);
