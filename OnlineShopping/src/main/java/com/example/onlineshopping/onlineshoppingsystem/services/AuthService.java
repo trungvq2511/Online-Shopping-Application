@@ -10,4 +10,6 @@ public interface AuthService {
     void signUp(UserDTORequest userRequestDTO) throws InvalidInputDataException;
 
     RefreshTokenDTOResponse refreshToken(RefreshTokenDTORequest accessTokenDTORequest) throws InvalidTokenException;
+
+    void verifyEmail(String token) throws InvalidTokenException;
 }

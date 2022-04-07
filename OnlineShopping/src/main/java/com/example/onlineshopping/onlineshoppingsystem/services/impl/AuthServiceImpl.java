@@ -11,6 +11,7 @@ import com.example.onlineshopping.onlineshoppingsystem.dto.response.UserDTORespo
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidTokenException;
+import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
 import com.example.onlineshopping.onlineshoppingsystem.security.WebSecurityConfig;
 import com.example.onlineshopping.onlineshoppingsystem.services.AuthService;
@@ -87,6 +88,33 @@ public class AuthServiceImpl implements AuthService {
                 return new RefreshTokenDTOResponse(accessToken, refreshToken);
             } catch (Exception e) {
                 System.out.println("EXPIRED");
+                throw new InvalidTokenException(e.getMessage());
+            }
+        } else {
+            throw new InvalidTokenException("Token is invalid!");
+        }
+    }
+
+    @Override
+    public void verifyEmail(String token) throws InvalidTokenException {
+        if (token != null) {
+            //if token is valid
+            try {
+                //decode
+                Algorithm algorithm = Algorithm.HMAC256(WebSecurityConfig.SECRET_KEY);
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                //authenticate
+                String username = decodedJWT.getSubject();
+                //check if user is exists
+                User user = userService.checkExistsUserByUsername(username);
+                if(user == null) {
+                    throw new NotFoundException("User is not found!");
+                }
+                user.setVerified(true);
+                userRepository.save(user);
+
+            } catch (Exception e) {
                 throw new InvalidTokenException(e.getMessage());
             }
         } else {
