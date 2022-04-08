@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +51,13 @@ public class RatingServiceImpl implements RatingService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
         saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
     }
 
+    @Transactional
     @Override
     public void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
         saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
@@ -77,6 +80,7 @@ public class RatingServiceImpl implements RatingService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteRating(String userName, Long productId) throws InvalidInputDataException {
 

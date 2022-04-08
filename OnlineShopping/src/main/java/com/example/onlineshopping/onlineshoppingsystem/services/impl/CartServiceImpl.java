@@ -7,6 +7,7 @@ import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
+import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.CartItemsRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.ProductRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
@@ -64,22 +65,23 @@ public class CartServiceImpl implements CartService {
         for (ItemDTOResponse itemDTOResponse : cartDTOResponse.getItems()) {
             total = total + itemDTOResponse.getTotal();
         }
-
         cartDTOResponse.setTotal(total);
         return cartDTOResponse;
     }
 
     @Transactional
     @Override
-    public void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException {
+    public void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException, NotFoundException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
         Product product = productRepository.findAllByProductId(productId);
         if (product.getQuantity()<quantity) {
                 errors.put("product quantity","is not enough");
         }
-
-        if(findCartItemByKey(new CartItem.CartItemKey(userByEmail.getUserId(),productId))==null) {
+        if (!productRepository.existsById(productId)) {
+            throw new NotFoundException("Product with id = " + productId + " is not found!");
+        }
+        if(findCartItemByKey(new CartItem.CartItemKey(userByEmail.getUserId(),productId))!=null) {
             errors.put("Item","exist in Cart");
         }
         if (!errors.isEmpty()) {
@@ -95,9 +97,6 @@ public class CartServiceImpl implements CartService {
     public void editItemInCart(String userName, Long productId, CartItemDTORequest dto) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
-        if(userByEmail==null) {
-            errors.put("user","not found");
-        }
         Product product = productRepository.findAllByProductId(productId);
         if (product.getQuantity()<dto.getQuantity()) {
             errors.put("product quantity","is not enough");
@@ -116,9 +115,6 @@ public class CartServiceImpl implements CartService {
     public void deleteItemInCart(String userName, Long productId) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
-        if (userName == null) {
-            errors.put("user", "is not found");
-        }
         Product item = productService.getProductById(productId);
         if (item == null) {
             errors.put("product", "is not found");

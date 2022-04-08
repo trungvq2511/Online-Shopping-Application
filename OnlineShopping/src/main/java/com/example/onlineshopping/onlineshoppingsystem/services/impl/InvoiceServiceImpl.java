@@ -18,6 +18,7 @@ import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.productService = productService;
     }
 
+    @Transactional
     @Override
     public void addInvoice(String userName) throws Exception {
         Map<String, String> errors = new HashMap<>();
