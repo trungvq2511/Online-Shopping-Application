@@ -29,7 +29,7 @@ public class UserController {
         return new ResponseEntity(new SuccessResponse(userService.getUserInfo(username)),HttpStatus.OK);
     }
 
-    @PutMapping("/manage/edit-user-info")
+    @PutMapping("/edit-user-info")
     public ResponseEntity editUserInfo(@RequestBody UserDTORequest userDTORequest) throws NotFoundException {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         userService.editUserInfo(username, userDTORequest);

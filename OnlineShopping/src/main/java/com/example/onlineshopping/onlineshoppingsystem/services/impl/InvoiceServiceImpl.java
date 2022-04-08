@@ -44,7 +44,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Map<String, String> errors = new HashMap<>();
         User userById = userService.getUserById(userId);
         if (userById != null) {
-            errors.put("user", "is not found");
+            errors.put("User", "is not found");
         }
         List<CartItem> cartItems = cartItemsRepository.findAllByUser_UserId(userId);
         if(cartItems != null) {

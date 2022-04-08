@@ -76,7 +76,6 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public void deleteRating(Long userId, Long productId) throws InvalidInputDataException {
-
         Map<String, String> errors = new HashMap<>();
         User userById = userService.getUserById(userId);
         if (userById != null) {
