@@ -7,9 +7,8 @@ import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDat
 import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 
 public interface CartService {
-    CartDTOResponse getAllCartItems(long userId);
-    void addItemToCart(Long userID, CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException, NotFoundException;
-    void editItemInCart(Long userId,  CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException;
-
-    void deleteItemInCart(Long userId, Long productId) throws InvalidInputDataException;
+    CartDTOResponse getAllCartItems(String username) throws NotFoundException;
+    void addItemToCart(String username, CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException, NotFoundException;
+    void editItemInCart(String username,  CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException;
+    void deleteItemInCart(String username, Long productId) throws InvalidInputDataException;
 }
