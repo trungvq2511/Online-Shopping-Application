@@ -14,6 +14,7 @@ public interface ProductService {
     List<ProductDTOResponse> getAllProduct(int pageIndex, int pageSize);
 
     Product getProductById(long productId);
+
     ProductDTOResponse getProductDTOById(long productId) throws NotFoundException;
 
     void deleteById(long productId) throws NotFoundException;

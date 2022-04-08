@@ -13,6 +13,7 @@ import com.example.onlineshopping.onlineshoppingsystem.repositories.InvoiceRepos
 import com.example.onlineshopping.onlineshoppingsystem.repositories.ProductRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
 import com.example.onlineshopping.onlineshoppingsystem.services.InvoiceService;
+import com.example.onlineshopping.onlineshoppingsystem.services.ProductService;
 import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,31 +32,33 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final InvoiceRepository invoiceRepository;
+    private final ProductService productService;
 
 
     public InvoiceServiceImpl(ModelMapper modelMapper, CartItemsRepository cartItemsRepository, UserService userService,
-                              ProductRepository productRepository, UserRepository userRepository, InvoiceRepository invoiceRepository) {
+                              ProductRepository productRepository, UserRepository userRepository, InvoiceRepository invoiceRepository, ProductService productService) {
         this.modelMapper = modelMapper;
         this.cartItemsRepository = cartItemsRepository;
         this.userService = userService;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.invoiceRepository = invoiceRepository;
+        this.productService = productService;
     }
 
     @Override
-    public void addInvoice(Long userId) throws Exception {
+    public void addInvoice(String userName) throws Exception {
         Map<String, String> errors = new HashMap<>();
-        User userById = userService.getUserById(userId);
-        if (userById == null) {
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if (userByEmail == null) {
             errors.put("user", "is not found");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            List<CartItem> cartItems = cartItemsRepository.findAllByUser_UserId(userId);
+            List<CartItem> cartItems = cartItemsRepository.findAllByUser_UserId(userByEmail.getUserId());
             if(cartItems == null) {
-                throw new NotFoundException("Create invoice fail because user "+userById.getUserId()+"don't have items in cart");
+                throw new NotFoundException("Create invoice fail because user "+userByEmail.getUserId()+"don't have items in cart");
             } else {
                 Invoice newInvoice = new Invoice();
                 List<InvoiceItem> invoiceItems = cartItems.stream().map(cartItem ->
@@ -63,18 +66,23 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .collect(Collectors.toList());
 
                 cartItems.forEach(cartItem -> {
-                    Product product = productRepository.findById(userId)
-                            .orElseThrow(() -> new IllegalArgumentException("Empty"));
-                    int availableQuantityAfterCreateInvoice = product.getQuantity() - cartItem.getQuantity();
-                    product.setQuantity(availableQuantityAfterCreateInvoice);
-                    productRepository.save(product);
+                    Product productById = productService.getProductById(cartItem.getProduct().getProductId());
+                    int availableQuantityAfterCreateInvoice = productById.getQuantity() - cartItem.getQuantity();
+                    productById.setQuantity(availableQuantityAfterCreateInvoice);
+                    productRepository.save(productById);
                 });
-                cartItemsRepository.removeAllByUserUserId(userById.getUserId());
-                newInvoice.setUser(userById);
+                newInvoice.setUser(userByEmail);
                 newInvoice.setItems(invoiceItems);
                 newInvoice.setStatus(EnumInvoiceStatus.ACCEPTED_ORDER);
-                newInvoice.setTotal((double) invoiceItems.stream().mapToLong(items -> (long) (items.getQuantity()*items.getPrice())).sum());
+                //Total Invoice
+                double sum = 0L;
+                for (InvoiceItem items : invoiceItems) {
+                    double l = items.getQuantity() * items.getPrice();
+                    sum += l;
+                }
+                newInvoice.setTotal(sum);
                 invoiceRepository.save(newInvoice);
+                cartItemsRepository.removeAllByUserUserId(userByEmail.getUserId());
             }
         }
     }
