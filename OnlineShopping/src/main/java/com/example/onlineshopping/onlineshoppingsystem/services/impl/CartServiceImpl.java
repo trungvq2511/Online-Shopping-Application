@@ -7,7 +7,6 @@ import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
-import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.CartItemsRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.ProductRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
@@ -47,13 +46,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDTOResponse getAllCartItems(String username) throws NotFoundException {
+    public CartDTOResponse getAllCartItems(long userId) {
         CartDTOResponse cartDTOResponse = new CartDTOResponse();
 
-        User user = userRepository.findUserByEmail(username);
-        if(user == null ) {
-            throw new NotFoundException("User is not found!");
-        }
+        User user = userRepository.getById(userId);
         List<CartItem> cartItemByUser = cartItemsRepository.findCartItemByUser(user);
         cartItemByUser.forEach(cartItem -> {
             ItemDTOResponse item = modelMapper.map(cartItem.getProduct(), ItemDTOResponse.class);
@@ -74,24 +70,24 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public void addItemToCart(String username, CartItemDTORequest dto) throws InvalidInputDataException {
-        saveItemToCart(username, dto.getProductId(), dto.getQuantity());
+    public void addItemToCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
+        saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
     }
 
     @Transactional
     @Override
-    public void editItemInCart(String username, CartItemDTORequest dto) throws InvalidInputDataException {
-        saveItemToCart(username, dto.getProductId(), dto.getQuantity());
+    public void editItemInCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
+        saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
     }
 
-    private void saveItemToCart(String username, Long productId, Integer quantity) throws InvalidInputDataException {
+    private void saveItemToCart(Long userId, Long productId, Integer quantity) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userByEmail = userRepository.findUserByEmail(username);
-        if (userByEmail == null) {
+        User userById = userService.getUserById(userId);
+        if (userById != null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item == null) {
+        if (item != null) {
             errors.put("product", "is not found");
         }
         if (item.getQuantity() < quantity) {
@@ -100,26 +96,26 @@ public class CartServiceImpl implements CartService {
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            cartItemsRepository.save(new CartItem(userByEmail, item, quantity));
+            cartItemsRepository.save(new CartItem(userById, item, quantity));
         }
     }
 
     @Transactional
     @Override
-    public void deleteItemInCart(String username, Long productId) throws InvalidInputDataException {
+    public void deleteItemInCart(Long userId, Long productId) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userByEmail = userRepository.findUserByEmail(username);
-        if (userByEmail == null) {
+        User userById = userService.getUserById(userId);
+        if (userById != null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item == null) {
+        if (item != null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            CartItem.CartItemKey key = new CartItem.CartItemKey(userByEmail.getUserId(), productId);
+            CartItem.CartItemKey key = new CartItem.CartItemKey(userId, productId);
             cartItemsRepository.deleteById(key);
         }
     }

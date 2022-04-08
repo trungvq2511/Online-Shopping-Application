@@ -60,11 +60,11 @@ public class RatingServiceImpl implements RatingService {
     private void saveRating(Long userId, Long productId, String comment, Double score) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userById = userService.getUserById(userId);
-        if (userById == null) {
+        if (userById != null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item == null) {
+        if (item != null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {
@@ -78,11 +78,11 @@ public class RatingServiceImpl implements RatingService {
     public void deleteRating(Long userId, Long productId) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userById = userService.getUserById(userId);
-        if (userById == null) {
+        if (userById != null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item == null) {
+        if (item != null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {

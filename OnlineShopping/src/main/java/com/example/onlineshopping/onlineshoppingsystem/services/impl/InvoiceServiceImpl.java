@@ -43,11 +43,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice addInvoice(Long userId, InvoiceRequestDTO dto) throws Exception {
         Map<String, String> errors = new HashMap<>();
         User userById = userService.getUserById(userId);
-        if (userById == null) {
+        if (userById != null) {
             errors.put("User", "is not found");
         }
         List<CartItem> cartItems = cartItemsRepository.findAllByUser_UserId(userId);
-        if(cartItems == null) {
+        if(cartItems != null) {
             errors.put("Invoice","create fail");
         }
         Invoice newInvoice = new Invoice();
