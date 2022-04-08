@@ -61,14 +61,24 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> products = productRepository.findAll(pageable);
         List<Product> all = products.toList();
 
-        List<ProductDTOResponse> productDTOResponseList = all.stream().map(product -> modelMapper.map(product, ProductDTOResponse.class)).collect(Collectors.toList());
+        List<ProductDTOResponse> productDTOResponseList = new ArrayList<>();
+        for (Product product : all) {
+            ProductDTOResponse map = modelMapper.map(product, ProductDTOResponse.class);
+            double total = 0;
+            List<Rating> allByProduct_productId = ratingRepository.findAllByProduct_ProductId(product.getProductId());
+            for (Rating rating : allByProduct_productId) {
+                total += rating.getScore();
+            }
+            map.setRatingScore(total / allByProduct_productId.size());
+            productDTOResponseList.add(map);
+        }
         return productDTOResponseList;
     }
 
     @Override
     public Product getProductById(long productId) {
         Optional<Product> byId = productRepository.findById(productId);
-        return byId.isPresent() ? byId.get() : null ;
+        return byId.isPresent() ? byId.get() : null;
     }
 
     @Override
@@ -79,10 +89,10 @@ public class ProductServiceImpl implements ProductService {
         List<Rating> allByProduct_productId = ratingRepository.findAllByProduct_ProductId(productId);
 
         double total = 0;
-        for(Rating rating : allByProduct_productId) {
+        for (Rating rating : allByProduct_productId) {
             total += rating.getScore();
         }
-        double averageScore = total/allByProduct_productId.size();
+        double averageScore = total / allByProduct_productId.size();
         map.setRatingScore(averageScore);
         return map;
     }
