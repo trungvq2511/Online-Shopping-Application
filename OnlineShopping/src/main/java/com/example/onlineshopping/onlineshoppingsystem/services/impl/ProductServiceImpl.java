@@ -5,12 +5,14 @@ import com.example.onlineshopping.onlineshoppingsystem.dto.response.ProductDTORe
 import com.example.onlineshopping.onlineshoppingsystem.entities.file.File;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Category;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
+import com.example.onlineshopping.onlineshoppingsystem.entities.product.Rating;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidFileTypeException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.CategoryRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.FileRepository;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.ProductRepository;
+import com.example.onlineshopping.onlineshoppingsystem.repositories.RatingRepository;
 import com.example.onlineshopping.onlineshoppingsystem.services.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -40,16 +42,17 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
-
+    private final RatingRepository ratingRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
                               ModelMapper modelMapper,
-                              FileRepository fileRepository) {
+                              FileRepository fileRepository, RatingRepository ratingRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
+        this.ratingRepository = ratingRepository;
     }
 
     @Override
@@ -65,14 +68,23 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(long productId) {
         Optional<Product> byId = productRepository.findById(productId);
-        return byId.isPresent() ? null : byId.get();
+        return byId.isPresent() ? byId.get() : null ;
     }
 
     @Override
     public ProductDTOResponse getProductDTOById(long productId) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product is not found"));
-        return modelMapper.map(product, ProductDTOResponse.class);
+        ProductDTOResponse map = modelMapper.map(product, ProductDTOResponse.class);
+        List<Rating> allByProduct_productId = ratingRepository.findAllByProduct_ProductId(productId);
+
+        double total = 0;
+        for(Rating rating : allByProduct_productId) {
+            total += rating.getScore();
+        }
+        double averageScore = total/allByProduct_productId.size();
+        map.setRatingScore(averageScore);
+        return map;
     }
 
     @Transactional

@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, UserProductKey> {
     List<Rating> findAllByProduct_ProductId (Long productId, Pageable pageable);
+    List<Rating> findAllByProduct_ProductId(Long productId);
 }
