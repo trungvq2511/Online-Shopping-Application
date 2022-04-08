@@ -74,20 +74,18 @@ public class CartServiceImpl implements CartService {
     public void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
-        if(userByEmail==null) {
-            errors.put("user","not found");
-        }
         Product product = productRepository.findAllByProductId(productId);
         if (product.getQuantity()<quantity) {
                 errors.put("product quantity","is not enough");
+        }
+
+        if(findCartItemByKey(new CartItem.CartItemKey(userByEmail.getUserId(),productId))==null) {
+            errors.put("Item","exist in Cart");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
             CartItem cartItem = new CartItem(userByEmail,product,quantity);
-//            cartItem.setQuantity(quantity);
-//            cartItem.setUser(user1);
-//            cartItem.setProduct(product);
             cartItemsRepository.save(cartItem);
         }
     }
@@ -131,6 +129,11 @@ public class CartServiceImpl implements CartService {
             CartItem.CartItemKey key = new CartItem.CartItemKey(userByEmail.getUserId(), productId);
             cartItemsRepository.deleteById(key);
         }
+    }
+
+    @Override
+    public CartItem findCartItemByKey(CartItem.CartItemKey key) {
+        return cartItemsRepository.existsById(key) ? cartItemsRepository.getById(key) : null;
     }
 
 }

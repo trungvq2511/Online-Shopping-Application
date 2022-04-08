@@ -3,6 +3,7 @@ package com.example.onlineshopping.onlineshoppingsystem.services;
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.CartItemDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.ProductDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.CartDTOResponse;
+import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 
@@ -12,4 +13,6 @@ public interface CartService {
     void editItemInCart(String userName, Long productId, CartItemDTORequest dto) throws InvalidInputDataException;
 
     void deleteItemInCart(String userName, Long productId) throws InvalidInputDataException;
+
+    CartItem findCartItemByKey(CartItem.CartItemKey key);
 }
