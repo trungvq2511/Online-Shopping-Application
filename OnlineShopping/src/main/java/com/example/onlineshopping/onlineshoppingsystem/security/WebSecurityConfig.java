@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //JWT signature secret key
     public static final String SECRET_KEY = "secret-key";
     //token expired time: 10 minutes
-    public static final int ACCESS_TOKEN_EXPIRED_TIME = 10 * 60 * 1000;
+    public static final int ACCESS_TOKEN_EXPIRED_TIME = 60 * 60 * 1000;
     public static final int REFRESH_TOKEN_EXPIRED_TIME = 60 * 60 * 1000;
 
     private final UserDetailsService userDetailsService;

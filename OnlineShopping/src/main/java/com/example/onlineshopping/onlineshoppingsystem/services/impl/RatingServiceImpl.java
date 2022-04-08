@@ -7,6 +7,7 @@ import com.example.onlineshopping.onlineshoppingsystem.entities.product.Rating;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.repositories.RatingRepository;
+import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
 import com.example.onlineshopping.onlineshoppingsystem.services.ProductService;
 import com.example.onlineshopping.onlineshoppingsystem.services.RatingService;
 import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
@@ -27,12 +28,14 @@ public class RatingServiceImpl implements RatingService {
     private final RatingRepository ratingRepository;
     private final UserService userService;
     private final ProductService productService;
+    private final UserRepository userRepository;
 
-    public RatingServiceImpl(ModelMapper modelMapper, RatingRepository ratingRepository, UserService userService, ProductService productService) {
+    public RatingServiceImpl(ModelMapper modelMapper, RatingRepository ratingRepository, UserService userService, ProductService productService, UserRepository userRepository) {
         this.modelMapper = modelMapper;
         this.ratingRepository = ratingRepository;
         this.userService = userService;
         this.productService = productService;
+        this.userRepository = userRepository;
     }
 
 
@@ -48,48 +51,48 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public void createRating(Long userId, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userId,dto.getProductId(),dto.getComment(), dto.getScore());
+    public void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
+        saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
     }
 
     @Override
-    public void editRating(Long userId, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userId,dto.getProductId(),dto.getComment(), dto.getScore());
+    public void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
+        saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
     }
 
-    private void saveRating(Long userId, Long productId, String comment, Double score) throws InvalidInputDataException {
+    private void saveRating(String userName, Long productId, String comment, Double score) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userById = userService.getUserById(userId);
-        if (userById != null) {
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if (userByEmail == null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item != null) {
+        if (item == null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            ratingRepository.save(new Rating(userById,item,comment,score));
+            ratingRepository.save(new Rating(userByEmail,item,comment,score));
         }
     }
 
     @Override
-    public void deleteRating(Long userId, Long productId) throws InvalidInputDataException {
+    public void deleteRating(String userName, Long productId) throws InvalidInputDataException {
 
         Map<String, String> errors = new HashMap<>();
-        User userById = userService.getUserById(userId);
-        if (userById != null) {
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if (userByEmail == null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item != null) {
+        if (item == null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            Rating.UserProductKey key = new Rating.UserProductKey(userId, productId);
+            Rating.UserProductKey key = new Rating.UserProductKey(userByEmail.getUserId(), productId);
             ratingRepository.deleteById(key);
         }
     }

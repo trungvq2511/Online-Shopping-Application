@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 OnlineShopping/src/main/resources/application.properties
 OnlineShopping/static/
+.idea
+OnlineShopping/src/main/resources/application.properties
+

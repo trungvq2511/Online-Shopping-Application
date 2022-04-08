@@ -16,9 +16,9 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    @PostMapping("/createInvoice")
-    public ResponseEntity createInvoice(@RequestParam Long userId, @RequestBody InvoiceRequestDTO dto) throws Exception{
-        invoiceService.addInvoice(userId,dto);
+    @GetMapping("/createInvoice")
+    public ResponseEntity createInvoice(@RequestParam Long userId) throws Exception{
+        invoiceService.addInvoice(userId);
         return new ResponseEntity(new SuccessResponse("Create invoice success"), HttpStatus.OK);
     }
 }

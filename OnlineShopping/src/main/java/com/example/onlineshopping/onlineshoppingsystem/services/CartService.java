@@ -8,8 +8,8 @@ import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundExcepti
 
 public interface CartService {
     CartDTOResponse getAllCartItems(long userId);
-    void addItemToCart(Long userID, CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException, NotFoundException;
-    void editItemInCart(Long userId,  CartItemDTORequest cartItemDTORequest) throws InvalidInputDataException;
+    void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException, NotFoundException;
+    void editItemInCart(String userName, Long productId, CartItemDTORequest dto) throws InvalidInputDataException;
 
-    void deleteItemInCart(Long userId, Long productId) throws InvalidInputDataException;
+    void deleteItemInCart(String userName, Long productId) throws InvalidInputDataException;
 }

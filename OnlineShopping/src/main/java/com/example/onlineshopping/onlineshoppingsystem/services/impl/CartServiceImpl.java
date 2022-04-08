@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -70,52 +71,64 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public void addItemToCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
-        saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
-    }
-
-    @Transactional
-    @Override
-    public void editItemInCart(Long userId, CartItemDTORequest dto) throws InvalidInputDataException {
-        saveItemToCart(userId, dto.getProductId(), dto.getQuantity());
-    }
-
-    private void saveItemToCart(Long userId, Long productId, Integer quantity) throws InvalidInputDataException {
+    public void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userById = userService.getUserById(userId);
-        if (userById != null) {
-            errors.put("user", "is not found");
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if(userByEmail==null) {
+            errors.put("user","not found");
         }
-        Product item = productService.getProductById(productId);
-        if (item != null) {
-            errors.put("product", "is not found");
-        }
-        if (item.getQuantity() < quantity) {
-            errors.put("product quantity", "is not enough");
+        Product product = productRepository.findAllByProductId(productId);
+        if (product.getQuantity()<quantity) {
+                errors.put("product quantity","is not enough");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            cartItemsRepository.save(new CartItem(userById, item, quantity));
+            CartItem cartItem = new CartItem(userByEmail,product,quantity);
+//            cartItem.setQuantity(quantity);
+//            cartItem.setUser(user1);
+//            cartItem.setProduct(product);
+            cartItemsRepository.save(cartItem);
         }
     }
 
     @Transactional
     @Override
-    public void deleteItemInCart(Long userId, Long productId) throws InvalidInputDataException {
+    public void editItemInCart(String userName, Long productId, CartItemDTORequest dto) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userById = userService.getUserById(userId);
-        if (userById != null) {
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if(userByEmail==null) {
+            errors.put("user","not found");
+        }
+        Product product = productRepository.findAllByProductId(productId);
+        if (product.getQuantity()<dto.getQuantity()) {
+            errors.put("product quantity","is not enough");
+        }
+        if (!errors.isEmpty()) {
+            throw new InvalidInputDataException(errors);
+        } else {
+            CartItem cartItem = new CartItem(userByEmail,product,dto.getQuantity());
+            cartItem.setQuantity(dto.getQuantity());
+            cartItemsRepository.save(cartItem);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteItemInCart(String userName, Long productId) throws InvalidInputDataException {
+        Map<String, String> errors = new HashMap<>();
+        User userByEmail = userRepository.findUserByEmail(userName);
+        if (userName == null) {
             errors.put("user", "is not found");
         }
         Product item = productService.getProductById(productId);
-        if (item != null) {
+        if (item == null) {
             errors.put("product", "is not found");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            CartItem.CartItemKey key = new CartItem.CartItemKey(userId, productId);
+            CartItem.CartItemKey key = new CartItem.CartItemKey(userByEmail.getUserId(), productId);
             cartItemsRepository.deleteById(key);
         }
     }

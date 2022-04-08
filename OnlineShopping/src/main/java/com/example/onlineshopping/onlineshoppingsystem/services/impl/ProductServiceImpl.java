@@ -80,10 +80,10 @@ public class ProductServiceImpl implements ProductService {
     public void addProduct(ProductDTORequest dto) throws InvalidInputDataException {
         Map<String, String> exceptionList = new HashMap<>();
         if (dto.getPrice() < 0) {
-            exceptionList.put("Price", "can't be positive number");
+            exceptionList.put("Price", "can't be negative number");
         }
         if (dto.getQuantity() < 0)
-            exceptionList.put("Quantity", "can't be positive number");
+            exceptionList.put("Quantity", "can't be negative number");
         if (!exceptionList.isEmpty()) {
             throw new InvalidInputDataException(exceptionList);
         } else {

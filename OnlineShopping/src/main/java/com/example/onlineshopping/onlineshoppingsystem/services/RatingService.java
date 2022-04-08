@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface RatingService {
     List<RatingDTOResponse> getRatingOfProduct(Long ProductId, int PageIndex, int PageSize) ;
-    void createRating(Long userId, RatingDTORequest dto) throws InvalidInputDataException;
-    void editRating(Long userId, RatingDTORequest dto) throws InvalidInputDataException;
-    void deleteRating(Long userId, Long productId) throws InvalidInputDataException;
+    void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException;
+    void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException;
+    void deleteRating(String userName, Long productId) throws InvalidInputDataException;
 }

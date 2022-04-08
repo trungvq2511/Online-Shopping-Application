@@ -6,5 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface InvoiceService {
-    Invoice addInvoice(Long userId, InvoiceRequestDTO dto) throws Exception;
+    void addInvoice(Long userId) throws Exception;
+
 }
