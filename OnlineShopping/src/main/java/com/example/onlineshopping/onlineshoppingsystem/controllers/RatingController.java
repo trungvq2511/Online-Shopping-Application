@@ -19,16 +19,16 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-    @GetMapping("/getRatingOfProduct")
+    @GetMapping("/get-rating-of-product")
     public ResponseEntity getRatingOfProduct(@RequestParam long productId,
-                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
-        ratingService.getRatingOfProduct(productId, pageIndex, pageSize);
-        return new ResponseEntity(new SuccessResponse("Show Rating to one Product successfully!"), HttpStatus.OK);
+                                             @RequestParam int pageIndex,
+                                             @RequestParam int pageSize) {
+        return new ResponseEntity(new SuccessResponse(ratingService.getRatingOfProduct(productId, pageIndex, pageSize)), HttpStatus.OK);
     }
 
     @PostMapping("/createRating")
     public ResponseEntity createRating(@RequestBody RatingDTORequest dto)
-            throws InvalidInputDataException, NotFoundException {
+            throws InvalidInputDataException {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         ratingService.createRating(username, dto);
         return new ResponseEntity(new SuccessResponse("Create rating successfully!"), HttpStatus.OK);
@@ -39,7 +39,7 @@ public class RatingController {
             throws InvalidInputDataException {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         ratingService.editRating(username, dto);
-        return new ResponseEntity(new SuccessResponse("Edit Rating of User successfully!"), HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse("Edit Rating successfully!"), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteRating/{productId}")

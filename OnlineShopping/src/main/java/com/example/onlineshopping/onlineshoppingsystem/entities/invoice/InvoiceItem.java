@@ -32,16 +32,14 @@ public class InvoiceItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "money", nullable = false)
+    @Column(name = "price", nullable = false)
     private Double price;
 
     @Column(name = "totalInCart", nullable = false)
     private Double totalInCart;
 
-    public InvoiceItem(Invoice invoice, Product item, Integer quantity, Double price, Double totalInCart) {
-        this.invoiceItemKey = new InvoiceItemKey(invoice.getInvoiceId(), item.getProductId());
-        this.invoice = invoice;
-        this.item = item;
+    public InvoiceItem(long invoiceId, long productId, int quantity, Double price, Double totalInCart) {
+        this.invoiceItemKey = new InvoiceItemKey(invoiceId, productId);
         this.quantity = quantity;
         this.price = price;
         this.totalInCart = totalInCart;

@@ -54,36 +54,50 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     @Override
     public void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userName, dto.getProductId(), dto.getComment(), dto.getScore());
+        User userByEmail = userRepository.findUserByEmail(userName);
+        Map<String, String> errors = new HashMap<>();
+        //check rating existed
+        if (ratingRepository.existsByUserUserIdAndProductProductId(userByEmail.getUserId(), dto.getProductId())) {
+            errors.put("rating", "is existed");
+        }
+        Product item = productService.getProductById(dto.getProductId());
+        if (item == null) {
+            errors.put("product", "is not found");
+        }
+        if (dto.getScore() < 0) {
+            errors.put("score", "must in 0 - 5.0");
+        }
+        if (!errors.isEmpty()) {
+            throw new InvalidInputDataException(errors);
+        } else {
+            ratingRepository.save(new Rating(userByEmail, item, dto.getComment(), dto.getScore()));
+        }
     }
 
     @Transactional
     @Override
     public void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userName, dto.getProductId(), dto.getComment(), dto.getScore());
-    }
-
-    private void saveRating(String userName, Long productId, String comment, Double score) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
-        User userByEmail = userRepository.findUserByEmail(userName);
-        if (userByEmail == null) {
-            errors.put("user", "is not found");
-        }
-        Product item = productService.getProductById(productId);
+        Product item = productService.getProductById(dto.getProductId());
         if (item == null) {
             errors.put("product", "is not found");
+        }
+        if (dto.getScore() < 0) {
+            errors.put("score", "must in 0 - 5.0");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            ratingRepository.save(new Rating(userByEmail, item, comment, score));
+            Rating rating = ratingRepository.findByProductProductId(dto.getProductId());
+            rating.setScore(dto.getScore());
+            rating.setComment(dto.getComment());
+            ratingRepository.save(rating);
         }
     }
 
     @Transactional
     @Override
     public void deleteRating(String userName, Long productId) throws InvalidInputDataException {
-
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
         if (userByEmail == null) {
