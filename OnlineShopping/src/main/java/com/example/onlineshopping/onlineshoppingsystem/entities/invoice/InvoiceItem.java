@@ -35,12 +35,16 @@ public class InvoiceItem {
     @Column(name = "money", nullable = false)
     private Double price;
 
-    public InvoiceItem(Invoice invoice, Product item, Integer quantity, Double price) {
+    @Column(name = "totalInCart", nullable = false)
+    private Double totalInCart;
+
+    public InvoiceItem(Invoice invoice, Product item, Integer quantity, Double price, Double totalInCart) {
         this.invoiceItemKey = new InvoiceItemKey(invoice.getInvoiceId(), item.getProductId());
         this.invoice = invoice;
         this.item = item;
         this.quantity = quantity;
         this.price = price;
+        this.totalInCart = totalInCart;
     }
 
     @Embeddable

@@ -4,6 +4,7 @@ import com.example.onlineshopping.onlineshoppingsystem.dto.request.CartItemDTORe
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.CartDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.ItemDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;
+import com.example.onlineshopping.onlineshoppingsystem.entities.invoice.InvoiceItem;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
@@ -18,10 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -48,11 +46,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDTOResponse getAllCartItems(long userId) {
+    public CartDTOResponse getAllCartItems(String userName) {
         CartDTOResponse cartDTOResponse = new CartDTOResponse();
-
-        User user = userRepository.getById(userId);
-        List<CartItem> cartItemByUser = cartItemsRepository.findCartItemByUser(user);
+        User userByEmail = userRepository.findUserByEmail(userName);
+        List<CartItem> cartItemByUser = cartItemsRepository.findCartItemByUser(userByEmail);
         cartItemByUser.forEach(cartItem -> {
             ItemDTOResponse item = modelMapper.map(cartItem.getProduct(), ItemDTOResponse.class);
             item.setQuantity(cartItem.getQuantity());
@@ -87,7 +84,9 @@ public class CartServiceImpl implements CartService {
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
+
             CartItem cartItem = new CartItem(userByEmail,product,quantity);
+            cartItem.setTotalInCart(cartItem.getQuantity()*cartItem.getProduct().getPrice());
             cartItemsRepository.save(cartItem);
         }
     }
@@ -104,8 +103,10 @@ public class CartServiceImpl implements CartService {
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
+
             CartItem cartItem = new CartItem(userByEmail,product,dto.getQuantity());
             cartItem.setQuantity(dto.getQuantity());
+            cartItem.setTotalInCart(cartItem.getQuantity()*cartItem.getProduct().getPrice());
             cartItemsRepository.save(cartItem);
         }
     }

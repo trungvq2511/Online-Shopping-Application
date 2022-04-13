@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,23 +64,27 @@ public class InvoiceServiceImpl implements InvoiceService {
                 throw new NotFoundException("Create invoice fail because user "+userByEmail.getUserId()+"don't have items in cart");
             } else {
                 Invoice newInvoice = new Invoice();
-                List<InvoiceItem> invoiceItems = cartItems.stream().map(cartItem ->
-                                new InvoiceItem(newInvoice, cartItem.getProduct(), cartItem.getQuantity(), cartItem.getProduct().getPrice()))
-                        .collect(Collectors.toList());
+                List<InvoiceItem> invoiceItems = new ArrayList<>();
+                for (CartItem item : cartItems) {
+                    InvoiceItem invoiceItem = new InvoiceItem(newInvoice, item.getProduct()
+                            , item.getQuantity(), item.getProduct().getPrice(), item.getTotalInCart());
+                    invoiceItems.add(invoiceItem);
+                }
 
-                cartItems.forEach(cartItem -> {
+                //update product quantity
+                for (CartItem cartItem : cartItems) {
                     Product productById = productService.getProductById(cartItem.getProduct().getProductId());
                     int availableQuantityAfterCreateInvoice = productById.getQuantity() - cartItem.getQuantity();
                     productById.setQuantity(availableQuantityAfterCreateInvoice);
                     productRepository.save(productById);
-                });
+                }
                 newInvoice.setUser(userByEmail);
                 newInvoice.setItems(invoiceItems);
                 newInvoice.setStatus(EnumInvoiceStatus.ACCEPTED_ORDER);
                 //Total Invoice
                 double sum = 0L;
                 for (InvoiceItem items : invoiceItems) {
-                    double l = items.getQuantity() * items.getPrice();
+                    double l = items.getTotalInCart();
                     sum += l;
                 }
                 newInvoice.setTotal(sum);
