@@ -1,6 +1,5 @@
 package com.example.onlineshopping.onlineshoppingsystem.services.impl;
 
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.CartItemDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.CartDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.ItemDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;

@@ -1,6 +1,5 @@
 package com.example.onlineshopping.onlineshoppingsystem.controllers;
 
-import com.example.onlineshopping.onlineshoppingsystem.dto.request.CartItemDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.SuccessResponse;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
 import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;

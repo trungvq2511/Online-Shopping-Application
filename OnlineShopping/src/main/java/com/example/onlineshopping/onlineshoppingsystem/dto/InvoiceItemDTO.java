@@ -1,7 +1,5 @@
 package com.example.onlineshopping.onlineshoppingsystem.dto;
 
-import com.example.onlineshopping.onlineshoppingsystem.entities.invoice.Invoice;
-import com.example.onlineshopping.onlineshoppingsystem.entities.invoice.InvoiceItem;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
 import lombok.*;
 

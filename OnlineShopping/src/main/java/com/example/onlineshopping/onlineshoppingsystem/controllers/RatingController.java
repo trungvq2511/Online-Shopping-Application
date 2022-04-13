@@ -3,7 +3,6 @@ package com.example.onlineshopping.onlineshoppingsystem.controllers;
 import com.example.onlineshopping.onlineshoppingsystem.dto.request.RatingDTORequest;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.SuccessResponse;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
-import com.example.onlineshopping.onlineshoppingsystem.exception.NotFoundException;
 import com.example.onlineshopping.onlineshoppingsystem.services.RatingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
