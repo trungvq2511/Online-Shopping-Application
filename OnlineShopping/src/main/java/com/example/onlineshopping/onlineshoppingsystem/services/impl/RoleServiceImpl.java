@@ -26,4 +26,5 @@ public class RoleServiceImpl implements RoleService {
         List<Role> all = roleRepository.findAll();
         List<RoleDTOResponse> roleDTOResponseList = all.stream().map(role -> modelMapper.map(role, RoleDTOResponse.class)).collect(Collectors.toList());
         return roleDTOResponseList;
-    }}
+    }
+}

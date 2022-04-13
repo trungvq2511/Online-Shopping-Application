@@ -9,8 +9,11 @@ import java.util.List;
 
 @Service
 public interface RatingService {
-    List<RatingDTOResponse> getRatingOfProduct(Long ProductId, int PageIndex, int PageSize) ;
+    List<RatingDTOResponse> getRatingOfProduct(Long ProductId, int PageIndex, int PageSize);
+
     void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException;
+
     void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException;
+
     void deleteRating(String userName, Long productId) throws InvalidInputDataException;
 }

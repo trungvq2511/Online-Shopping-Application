@@ -26,20 +26,20 @@ public class UserController {
     @GetMapping("/get/get-user-info")
     public ResponseEntity getUserInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        return new ResponseEntity(new SuccessResponse(userService.getUserInfo(username)),HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse(userService.getUserInfo(username)), HttpStatus.OK);
     }
 
     @PutMapping("/manage/edit-user-info")
     public ResponseEntity editUserInfo(@RequestBody UserDTORequest userDTORequest) throws NotFoundException {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         userService.editUserInfo(username, userDTORequest);
-        return new ResponseEntity(new SuccessResponse("Edit user successfully!"),HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse("Edit user successfully!"), HttpStatus.OK);
     }
 
     @DeleteMapping("/manage/delete-user/{userId}")
     public ResponseEntity deleteUser(@PathVariable long userId) throws NotFoundException {
         userService.deleteUser(userId);
-        return new ResponseEntity(new SuccessResponse("Delete user successfully!"),HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse("Delete user successfully!"), HttpStatus.OK);
 
     }
 }

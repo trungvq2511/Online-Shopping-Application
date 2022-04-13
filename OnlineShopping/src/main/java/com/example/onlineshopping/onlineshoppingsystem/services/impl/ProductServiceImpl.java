@@ -100,14 +100,17 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void addProduct(ProductDTORequest dto) throws InvalidInputDataException {
-        Map<String, String> exceptionList = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+        if (productRepository.existsByName(dto.getName())) {
+            errors.put("Name", "is existed!");
+        }
         if (dto.getPrice() < 0) {
-            exceptionList.put("Price", "can't be negative number");
+            errors.put("Price", "can't be negative number");
         }
         if (dto.getQuantity() < 0)
-            exceptionList.put("Quantity", "can't be negative number");
-        if (!exceptionList.isEmpty()) {
-            throw new InvalidInputDataException(exceptionList);
+            errors.put("Quantity", "can't be negative number");
+        if (!errors.isEmpty()) {
+            throw new InvalidInputDataException(errors);
         } else {
             Product product = modelMapper.map(dto, Product.class);
             //rating score = 0
@@ -127,14 +130,17 @@ public class ProductServiceImpl implements ProductService {
         if (!productRepository.existsById(productId)) {
             throw new NotFoundException("Product with id = " + productId + " is not found!");
         } else {
-            Map<String, String> exceptionList = new HashMap<>();
+            Map<String, String> errors = new HashMap<>();
+            if (productRepository.existsByName(dto.getName())) {
+                errors.put("Name", "is existed!");
+            }
             if (dto.getPrice() < 0) {
-                exceptionList.put("Price", "can't be positive number");
+                errors.put("Price", "can't be positive number");
             }
             if (dto.getQuantity() < 0)
-                exceptionList.put("Quantity", "can't be positive number");
-            if (!exceptionList.isEmpty()) {
-                throw new InvalidInputDataException(exceptionList);
+                errors.put("Quantity", "can't be positive number");
+            if (!errors.isEmpty()) {
+                throw new InvalidInputDataException(errors);
             } else {
                 Product product = productRepository.getById(productId);
                 product.setName(dto.getName());

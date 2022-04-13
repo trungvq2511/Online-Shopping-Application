@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (!name.matches("[a-zA-Z]+")) {
             errors.put("Category name", "must contain letter only!");
         }
-        if(categoryRepository.existsByName(name)) {
+        if (categoryRepository.existsByName(name)) {
             errors.put("Category name", "is existed!");
         }
         if (!errors.isEmpty()) {
@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void editCategory(Long categoryId, String name) throws InvalidInputDataException, NotFoundException {
-        if(!categoryRepository.existsById(categoryId)) {
+        if (!categoryRepository.existsById(categoryId)) {
             throw new NotFoundException("Category is not found!");
         }
         Map<String, String> errors = new HashMap<>();
@@ -63,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (!name.matches("[a-zA-Z]+")) {
             errors.put("Category name", "must contain letter only!");
         }
-        if(categoryRepository.existsByName(name)) {
+        if (categoryRepository.existsByName(name)) {
             errors.put("Category name", "is existed!");
         }
         if (!errors.isEmpty()) {
@@ -77,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long categoryId) throws NotFoundException {
-        if(!categoryRepository.existsById(categoryId)) {
+        if (!categoryRepository.existsById(categoryId)) {
             throw new NotFoundException("Category is not found!");
         }
         categoryRepository.deleteById(categoryId);

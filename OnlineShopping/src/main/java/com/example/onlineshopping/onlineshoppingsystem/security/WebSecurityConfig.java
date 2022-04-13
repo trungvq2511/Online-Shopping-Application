@@ -59,19 +59,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //auth API
         http.authorizeRequests().antMatchers("/login").permitAll();
         http.authorizeRequests().antMatchers("/auth/**").permitAll();
+        //user API
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/get/get-all-users/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/user/manage/**").hasAnyAuthority("ROLE_ADMIN");
         //product API
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/product/get/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.PUT, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/product/manage/**").hasAnyAuthority("ROLE_ADMIN");
-        //user API
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/get/get-all-users/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/user/manage/**").hasAnyAuthority("ROLE_ADMIN");
         //category API
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/category/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/category/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/category/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/category/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/category/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/category/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/category/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/category/**").hasAnyAuthority("ROLE_ADMIN");
+        //cart API
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/category/**").authenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/category/**").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/category/**").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/category/**").hasAnyAuthority("ROLE_USER");
+        //invoice API
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/invoice/**").hasAnyAuthority("ROLE_USER");
         //role API
         http.authorizeRequests().antMatchers("/role/**").hasAnyAuthority("ROLE_ADMIN");
 

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -53,17 +52,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void addInvoice(String userName) throws Exception {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
-        if (userByEmail == null) {
-            errors.put("user", "is not found");
+        if (userByEmail.getVerified() == false) {
+            errors.put("user", "is not verified yet!");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
             List<CartItem> cartItems = cartItemsRepository.findAllByUser_UserId(userByEmail.getUserId());
-            if(cartItems == null) {
-                throw new NotFoundException("Create invoice fail because user "+userByEmail.getUserId()+"don't have items in cart");
+            if (cartItems.size() == 0) {
+                throw new NotFoundException("Create invoice fail because user id = " + userByEmail.getUserId() + " don't have items in cart");
             } else {
+                //add invoice
                 Invoice newInvoice = new Invoice();
+
                 List<InvoiceItem> invoiceItems = new ArrayList<>();
                 for (CartItem item : cartItems) {
                     InvoiceItem invoiceItem = new InvoiceItem(newInvoice, item.getProduct()

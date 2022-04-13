@@ -41,10 +41,10 @@ public class RatingServiceImpl implements RatingService {
 
 
     @Override
-    public List<RatingDTOResponse> getRatingOfProduct(Long productId, int PageIndex, int PageSize)  {
-        Pageable pageable = PageRequest.of(PageIndex,PageSize);
-        return ratingRepository.findAllByProduct_ProductId(productId,pageable).stream().map(rating -> {
-            RatingDTOResponse dto = modelMapper.map(rating,RatingDTOResponse.class);
+    public List<RatingDTOResponse> getRatingOfProduct(Long productId, int PageIndex, int PageSize) {
+        Pageable pageable = PageRequest.of(PageIndex, PageSize);
+        return ratingRepository.findAllByProduct_ProductId(productId, pageable).stream().map(rating -> {
+            RatingDTOResponse dto = modelMapper.map(rating, RatingDTOResponse.class);
             dto.setProductId(rating.getProduct().getProductId());
             dto.setUserId(rating.getUser().getUserId());
             return dto;
@@ -54,13 +54,13 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     @Override
     public void createRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
+        saveRating(userName, dto.getProductId(), dto.getComment(), dto.getScore());
     }
 
     @Transactional
     @Override
     public void editRating(String userName, RatingDTORequest dto) throws InvalidInputDataException {
-        saveRating(userName,dto.getProductId(),dto.getComment(), dto.getScore());
+        saveRating(userName, dto.getProductId(), dto.getComment(), dto.getScore());
     }
 
     private void saveRating(String userName, Long productId, String comment, Double score) throws InvalidInputDataException {
@@ -76,7 +76,7 @@ public class RatingServiceImpl implements RatingService {
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
-            ratingRepository.save(new Rating(userByEmail,item,comment,score));
+            ratingRepository.save(new Rating(userByEmail, item, comment, score));
         }
     }
 

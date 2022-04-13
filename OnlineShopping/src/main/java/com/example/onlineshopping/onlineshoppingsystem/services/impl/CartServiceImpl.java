@@ -4,7 +4,6 @@ import com.example.onlineshopping.onlineshoppingsystem.dto.request.CartItemDTORe
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.CartDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.dto.response.ItemDTOResponse;
 import com.example.onlineshopping.onlineshoppingsystem.entities.cart.CartItem;
-import com.example.onlineshopping.onlineshoppingsystem.entities.invoice.InvoiceItem;
 import com.example.onlineshopping.onlineshoppingsystem.entities.product.Product;
 import com.example.onlineshopping.onlineshoppingsystem.entities.user.User;
 import com.example.onlineshopping.onlineshoppingsystem.exception.InvalidInputDataException;
@@ -19,7 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -68,52 +69,52 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public void addItemToCart(String userName,  Long productId, Integer quantity) throws InvalidInputDataException, NotFoundException {
+    public void addItemToCart(String userName, long productId, int quantity) throws InvalidInputDataException, NotFoundException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
         Product product = productRepository.findAllByProductId(productId);
-        if (product.getQuantity()<quantity) {
-                errors.put("product quantity","is not enough");
-        }
         if (!productRepository.existsById(productId)) {
             throw new NotFoundException("Product with id = " + productId + " is not found!");
         }
-        if(findCartItemByKey(new CartItem.CartItemKey(userByEmail.getUserId(),productId))!=null) {
-            errors.put("Item","exist in Cart");
+        if (product.getQuantity() < quantity) {
+            errors.put("product quantity", "is not enough");
+        }
+        if (findCartItemByKey(new CartItem.CartItemKey(userByEmail.getUserId(), productId)) != null) {
+            errors.put("Item", "exist in Cart");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
 
-            CartItem cartItem = new CartItem(userByEmail,product,quantity);
-            cartItem.setTotalInCart(cartItem.getQuantity()*cartItem.getProduct().getPrice());
+            CartItem cartItem = new CartItem(userByEmail, product, quantity);
+            cartItem.setTotalInCart(cartItem.getQuantity() * cartItem.getProduct().getPrice());
             cartItemsRepository.save(cartItem);
         }
     }
 
     @Transactional
     @Override
-    public void editItemInCart(String userName, Long productId, CartItemDTORequest dto) throws InvalidInputDataException {
+    public void editItemInCart(String userName, long productId, int quantity) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
         Product product = productRepository.findAllByProductId(productId);
-        if (product.getQuantity()<dto.getQuantity()) {
-            errors.put("product quantity","is not enough");
+        if (product.getQuantity() < quantity) {
+            errors.put("product quantity", "is not enough");
         }
         if (!errors.isEmpty()) {
             throw new InvalidInputDataException(errors);
         } else {
 
-            CartItem cartItem = new CartItem(userByEmail,product,dto.getQuantity());
-            cartItem.setQuantity(dto.getQuantity());
-            cartItem.setTotalInCart(cartItem.getQuantity()*cartItem.getProduct().getPrice());
+            CartItem cartItem = new CartItem(userByEmail, product, quantity);
+            cartItem.setQuantity(quantity);
+            cartItem.setTotalInCart(cartItem.getQuantity() * cartItem.getProduct().getPrice());
             cartItemsRepository.save(cartItem);
         }
     }
 
     @Transactional
     @Override
-    public void deleteItemInCart(String userName, Long productId) throws InvalidInputDataException {
+    public void deleteItemInCart(String userName, long productId) throws InvalidInputDataException {
         Map<String, String> errors = new HashMap<>();
         User userByEmail = userRepository.findUserByEmail(userName);
         Product item = productService.getProductById(productId);

@@ -33,7 +33,7 @@ public class CartItem implements Serializable {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "totalInCart",nullable = false)
+    @Column(name = "totalInCart", nullable = false)
     private double totalInCart;
 
     @Getter

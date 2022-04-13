@@ -18,7 +18,7 @@ public interface UserService {
 
     UserDTOResponse getUserInfo(String username);
 
-    void editUserInfo(String username,UserDTORequest userDTORequest ) throws NotFoundException;
+    void editUserInfo(String username, UserDTORequest userDTORequest) throws NotFoundException;
 
     void deleteUser(long userId) throws NotFoundException;
 

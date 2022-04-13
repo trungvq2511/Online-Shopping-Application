@@ -111,14 +111,14 @@ public class AuthServiceImpl implements AuthService {
                 String username = decodedJWT.getSubject();
                 //check if user is exists
                 User user = userService.checkExistsUserByUsername(username);
-                if(user == null) {
+                if (user == null) {
                     throw new NotFoundException("User is not found!");
                 }
                 user.setVerified(true);
                 userRepository.save(user);
 
             } catch (Exception e) {
-                throw new InvalidTokenException(e.getMessage());
+                throw new InvalidTokenException("Token is invalid!");
             }
         } else {
             throw new InvalidTokenException("Token is invalid!");

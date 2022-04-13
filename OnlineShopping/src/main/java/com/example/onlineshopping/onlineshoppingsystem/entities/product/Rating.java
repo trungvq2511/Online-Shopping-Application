@@ -48,8 +48,8 @@ public class Rating {
 
     }
 
-    public Rating(User user,Product product, String comment, Double score) {
-        this.key  = new UserProductKey(user.getUserId(), product.getProductId());
+    public Rating(User user, Product product, String comment, Double score) {
+        this.key = new UserProductKey(user.getUserId(), product.getProductId());
         this.user = user;
         this.product = product;
         this.comment = comment;
