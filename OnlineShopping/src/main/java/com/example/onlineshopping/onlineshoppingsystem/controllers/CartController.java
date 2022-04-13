@@ -23,9 +23,10 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/get-all-cart-items/{userId}")
-    public ResponseEntity getAllCartItems(@PathVariable long userId) {
-        return new ResponseEntity(new SuccessResponse(cartService.getAllCartItems(userId)), HttpStatus.OK);
+    @GetMapping("/get-all-cart-items/")
+    public ResponseEntity getAllCartItems() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return new ResponseEntity(new SuccessResponse(cartService.getAllCartItems(username)), HttpStatus.OK);
     }
 
     @PostMapping("/add-item-to-cart")
