@@ -19,7 +19,7 @@ public interface ProductService {
 
     void deleteById(long productId) throws NotFoundException;
 
-    void addProduct(ProductDTORequest dto) throws InvalidInputDataException;
+    void addProduct(ProductDTORequest dto) throws InvalidInputDataException, NotFoundException;
 
     void editProductBasicInfo(Long productId, ProductDTORequest dto) throws Exception;
 

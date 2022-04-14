@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void addProduct(ProductDTORequest dto) throws InvalidInputDataException {
+    public void addProduct(ProductDTORequest dto) throws InvalidInputDataException, NotFoundException {
         Map<String, String> errors = new HashMap<>();
         if (productRepository.existsByName(dto.getName())) {
             errors.put("Name", "is existed!");
@@ -117,7 +117,14 @@ public class ProductServiceImpl implements ProductService {
             product.setRatingScore(0D);
 
             //categories
-            List<Category> categories = dto.getCategories().stream().map(categoryRepository::getById).collect(Collectors.toList());
+            List<Category> categories = new ArrayList<>();
+            for (Long aLong : dto.getCategories()) {
+                Optional<Category> byId = categoryRepository.findById(aLong);
+                if(!byId.isPresent()) {
+                    throw new NotFoundException("Category is not found!");
+                }
+                categories.add(byId.get());
+            }
             product.setCategories(categories);
 
             productRepository.save(product);
@@ -150,9 +157,15 @@ public class ProductServiceImpl implements ProductService {
                 product.setMadeIn(dto.getMadeIn());
 
                 //categories
-                List<Category> categories = dto.getCategories().stream().map(categoryRepository::getById).collect(Collectors.toList());
+                List<Category> categories = new ArrayList<>();
+                for (Long aLong : dto.getCategories()) {
+                    Optional<Category> byId = categoryRepository.findById(aLong);
+                    if(!byId.isPresent()) {
+                        throw new NotFoundException("Category is not found!");
+                    }
+                    categories.add(byId.get());
+                }
                 product.setCategories(categories);
-
                 productRepository.save(product);
             }
         }
