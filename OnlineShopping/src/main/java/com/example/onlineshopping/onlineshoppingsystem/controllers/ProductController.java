@@ -32,7 +32,7 @@ public class ProductController {
     }
 
     @PostMapping("/manage/add-product")
-    public ResponseEntity addProduct(@RequestBody ProductDTORequest dto) throws InvalidInputDataException {
+    public ResponseEntity addProduct(@RequestBody ProductDTORequest dto) throws InvalidInputDataException, NotFoundException {
         productService.addProduct(dto);
         return new ResponseEntity(new SuccessResponse("Add product successfully!"), HttpStatus.OK);
     }
