@@ -89,7 +89,6 @@ public class AuthServiceImpl implements AuthService {
 
                 return new RefreshTokenDTOResponse(accessToken, refreshToken);
             } catch (Exception e) {
-                System.out.println("EXPIRED");
                 throw new InvalidTokenException(e.getMessage());
             }
         } else {

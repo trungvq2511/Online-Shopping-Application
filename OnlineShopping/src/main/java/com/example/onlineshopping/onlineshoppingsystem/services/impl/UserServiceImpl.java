@@ -10,8 +10,12 @@ import com.example.onlineshopping.onlineshoppingsystem.repositories.RoleReposito
 import com.example.onlineshopping.onlineshoppingsystem.repositories.UserRepository;
 import com.example.onlineshopping.onlineshoppingsystem.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -52,11 +56,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTOResponse> getAllUsers() {
-        List<User> all = userRepository.findAll();
+    public List<UserDTOResponse> getAllUsers(int pageIndex, int pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        Page<User> all = userRepository.findAll(pageable);
         List<UserDTOResponse> userDTOResponses = new ArrayList<>();
 
-        all.forEach(user -> {
+        all.toList().forEach(user -> {
             UserDTOResponse map = modelMapper.map(user, UserDTOResponse.class);
             userDTOResponses.add(map);
         });

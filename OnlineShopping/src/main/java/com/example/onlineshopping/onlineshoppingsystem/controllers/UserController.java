@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/get/get-all-users")
-    public ResponseEntity getAllUsers() {
-        return new ResponseEntity(new SuccessResponse(userService.getAllUsers()), HttpStatus.OK);
+    public ResponseEntity getAllUsers(@RequestParam int pageIndex, @RequestParam int pageSize) {
+        return new ResponseEntity(new SuccessResponse(userService.getAllUsers(pageIndex,pageSize)), HttpStatus.OK);
     }
 
     @GetMapping("/get/get-user-info")
