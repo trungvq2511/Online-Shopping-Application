@@ -65,6 +65,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 //roles
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
+
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
